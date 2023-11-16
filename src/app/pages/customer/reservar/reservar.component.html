@@ -1,0 +1,230 @@
+<div class="row mt-4">
+    <div class="col-sm-12">
+        <div class="card">
+            <div class="card-body">
+                <h2 class="card-title text-center"><b>Reservar Habitación</b></h2>
+                <hr>
+                <form [formGroup]="searchHotel">
+                    <div class="row">
+
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label for="exampleInputEmail1"><b>Fecha Ingreso</b></label>
+                                <input type="date" class="form-control" [min]="fechaActual"
+                                    formControlName="fechaIngreso">
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label for="exampleInputEmail1"><b>Fecha Salida</b></label>
+                                <input type="date" class="form-control" [min]="fechaActual"
+                                    formControlName="fechaSalida">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label for="exampleInputEmail1"><b>Cantidad Personas</b></label>
+                                <input type="number" class="form-control" formControlName="cantidadPersonas">
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label><b>Ciudad Destino</b></label>
+                                <select class="form-control" id="idHotel" formControlName="ciudadDestino">
+                                    <option disabled selected>Seleccione Un Hotel...</option>
+                                    <option value="Habilitado" *ngFor="let hotel of hotelList"
+                                        value="{{ hotel.ciudadHotel }}">{{
+                                        hotel.ciudadHotel }}</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+                <div class="float-right mt-2">
+                    <div>
+                        <button type="button" class="btn btn-outline-info" (click)="searchRooms()">
+                            Buscar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row col-sm-12 mt-4" *ngIf="!formularioHuesped">
+    <div class="col-sm-4" *ngFor="let hotel of respRooms">
+        <div class="card" style="width: 18rem;" *ngFor="let room of hotel.rooms">
+            <div class="card-body">
+                <h2 class="card-title text-center">{{ hotel.nombreHotel }}</h2>
+                <hr>
+                <p class="card-text">{{ hotel.descripcionHotel }}</p>
+                <hr>
+                <span class="d-flex justify-content-center text-center badge"
+                        [ngClass]="room.disponibilidad === false ? 'badge-danger': 'badge-success'">
+                       Habitación: {{ room.disponibilidad === false ? "Reservada": "Disponible" }}</span>
+                <p>Tipo Habitación: {{ room.tipoHabitacion }}</p>
+                <p>Costo Habitación: {{ (room.costo * 19) / 100 + room.costo}}</p>
+                <button type="button" class="btn btn-outline-info btn-block mt-2 mb-2" data-toggle="modal"
+                    data-target="#modalEmergencia" (click)="reservarRoom(room, hotel)" [disabled]="room.disponibilidad == false">
+                    Reservar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ============================================================== -->
+<!-- FORMULARIO DE CONTACTO EMERGENCIA -->
+<!-- ============================================================== -->
+<div class="modal fade" id="modalEmergencia" tabindex="-1" aria-labelledby="modalEmergenciaLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Datos de la reserva</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" #closModal>
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <h1 class="text-center">{{ datosHotel?.nombreHotel }}</h1>
+                <hr>
+                <p><b>Descripción del Hotel: </b>{{ datosHotel?.descripcionHotel }} </p>
+                <p><b>Tipo de Habitación:</b> {{ datosRoom?.tipoHabitacion }}</p>
+                <p><b>Costo de la habitación:</b> {{(datosRoom?.costo * 19) / 100 + datosRoom?.costo}}</p>
+                <hr>
+                <h3 class="text-center">Contacto de Emergencia</h3>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">Nombres y apellidos<small class="text-danger">
+                                    *</small></label>
+                            <input type="text" class="form-control" [(ngModel)]="nombresContacto">
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">Telefono de Contacto<small class="text-danger">
+                                    *</small></label>
+                            <input type="number" class="form-control" [(ngModel)]="telefonoContacto">
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <button type="button" class="btn btn-outline-info float-right" (click)="continueReserva()"
+                            data-toggle="modal" data-target="#exampleModal"
+                            [disabled]="!nombresContacto || !telefonoContacto">Siguiente</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- ============================================================== -->
+<!-- FIN FORMULARIO DE CONTACTO EMERGENCIA -->
+<!-- ============================================================== -->
+
+<div class="row mt-4" *ngIf="formularioHuesped">
+    <div class="col-sm-12">
+        <div class="card">
+            <div class="card-body">
+                <h2 class="card-title text-center"><b>Ingrese Huesped</b></h2>
+                <hr>
+                <form [formGroup]="reservaForm">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                <label for="exampleInputEmail1">Nombres y apellidos<small class="text-danger">
+                                        *</small></label>
+                                <input type="text" class="form-control" formControlName="nombres">
+                                <p *ngIf="campoNoValido('nombres')" class="text-danger">* El nombre es obligatorio
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label for="exampleInputEmail1">Fecha Nacimiento<small class="text-danger">
+                                        *</small></label>
+                                <input type="date" class="form-control" formControlName="fechaNacimiento">
+                                <p *ngIf="campoNoValido('fechaNacimiento')" class="text-danger">* La fecha de nacimiento
+                                    es obligatoria
+                                </p>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label for="email">Género<small class="text-danger"> *</small></label>
+                                <select class="form-control" id="genero" formControlName="genero">
+                                    <option disabled selected>Seleccione Género...</option>
+                                    <option value="1">Masculino</option>
+                                    <option value="2">Femenino</option>
+                                    <option value="3">Otro</option>
+                                </select>
+                            </div>
+                            <p *ngIf="campoNoValido('genero')" class="text-danger">* El género es obligatoria</p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label for="email">Tipo Documento<small class="text-danger"> *</small></label>
+                                <select class="form-control" id="tipoDocumento" formControlName="tipoDocumento">
+                                    <option disabled selected>Seleccione Tipo de Documento...</option>
+                                    <option value="1">C.C</option>
+                                    <option value="2">C.E</option>
+                                    <option value="3">Pasaporte</option>
+                                </select>
+                            </div>
+                            <p *ngIf="campoNoValido('tipoDocumento')" class="text-danger">* El tipo de documento es
+                                obligatoria</p>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label for="exampleInputEmail1">Número de Documento<small class="text-danger">
+                                        *</small></label>
+                                <input type="number" class="form-control" formControlName="nroDocumento">
+                                <p *ngIf="campoNoValido('nroDocumento')" class="text-danger">* El número de documento es
+                                    obligatorio
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label for="exampleInputEmail1">Email<small class="text-danger"> *</small></label>
+                                <input type="email" class="form-control" formControlName="email">
+                                <p *ngIf="campoNoValido('email')" class="text-danger">* El email es obligatorio
+                                </p>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label for="exampleInputEmail1">Telefono de Contacto<small class="text-danger">
+                                        *</small></label>
+                                <input type="number" class="form-control" formControlName="telefonoContacto">
+                                <p *ngIf="campoNoValido('telefonoContacto')" class="text-danger">* El telefono es
+                                    obligatorio
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <button type="button" class="btn btn-outline-info float-right" (click)="reservaRoom()"
+                            *ngIf="!btnAdd">Reservar</button>
+                        <button type="button" class="btn btn-outline-info float-right" (click)="addHuesped()"
+                            *ngIf="btnAdd">Añadir Huesped</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

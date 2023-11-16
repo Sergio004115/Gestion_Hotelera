@@ -1,0 +1,144 @@
+<div class="row float-right m-4">
+    <button type="button" class="btn btn-outline-info" data-toggle="modal" data-target="#exampleModal"
+        (click)="isBtnCreate = true; registerRoom.reset(); this.registerRoom.get('idHotel').enable();">
+        Crear Habitación
+    </button>
+</div>
+
+<div class="row col-sm-12 mt-4">
+    <div class="col-sm-4" *ngFor="let hotel of hotelList">
+        <div class="card" style="width: 18rem;">
+            <div class="card-body">
+                <h4 class="card-title">Hotel: {{ hotel.nombreHotel }}</h4>
+                <hr>
+                <!-- Iterar sobre los rooms de cada hotel -->
+                <div *ngFor="let room of hotel.rooms">
+                    <p class="card-text">Costo Total: {{ (room.costo * 19) / 100 + room.costo}} <strong>(Imp.
+                            Inc.)</strong></p>
+                    <p class="card-text">Tipo Habitación: {{ room.tipoHabitacion }}</p>
+                    <p class="card-text">Ubicación: {{ room.ubicacion }}</p>
+                    <span class="d-flex justify-content-center text-center badge"
+                        [ngClass]="room.disponibilidad === 'true' ? 'badge-success': 'badge-danger'">
+                        {{ room.disponibilidad === 'true' ? "Disponible": "No Disponible" }}</span>
+                    <button type="button" class="btn btn-outline-info btn-block mt-2 mb-2" data-toggle="modal"
+                        data-target="#exampleModal" (click)="isEditRoom(room)">
+                        Editar
+                    </button>
+                    <button type="button" class="btn btn-outline-danger btn-block" (click)="deleteRoom(room.id, hotel.id)">
+                        Eliminar
+                    </button>
+                    <hr>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- ============================================================== -->
+<!-- FORMULARIO DE REGISTRO NUEVA HABITACIÓN -->
+<!-- ============================================================== -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Crear Habitación</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" #closModal>
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form [formGroup]="registerRoom">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                <label for="email">Hotel<small class="text-danger"> *</small></label>
+                                <select class="form-control" id="idHotel" formControlName="idHotel" [disabled]="isBtnCreate">
+                                    <option disabled selected>Seleccione Un Hotel...</option>
+                                    <option value="Habilitado" *ngFor="let hotel of hotelList" value="{{ hotel.id }}">{{
+                                        hotel.nombreHotel }}</option>
+                                </select>
+                            </div>
+                            <p *ngIf="campoNoValido('idHotel')" class="text-danger">* El hotel es obligatorio
+                            </p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label for="exampleInputEmail1">Costo ($)<small class="text-danger"> *</small></label>
+                                <input type="number" class="form-control" formControlName="costo">
+                                <p *ngIf="campoNoValido('costo')" class="text-danger">* El costo es obligatorio
+                                </p>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label for="email">Impuestos<small class="text-danger"> *</small></label>
+                                <select class="form-control" id="impuesto" formControlName="impuesto">
+                                    <option disabled selected>Seleccione Un tipo de Impuesto...</option>
+                                    <option value="Habilitado" *ngFor="let taxe of listTaxes" value="{{ taxe.id }}">{{
+                                        taxe.tipo }}</option>
+                                </select>
+                            </div>
+                            <p *ngIf="campoNoValido('impuesto')" class="text-danger">* El Impuesto es obligatorio
+                            </p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label for="email">Tipo Habitación<small class="text-danger"> *</small></label>
+                                <select class="form-control" id="tipoHabitacion" formControlName="tipoHabitacion">
+                                    <option disabled selected>Seleccione Un tipo de Habitación...</option>
+                                    <option value="Habilitado" *ngFor="let room of listTypesRooms"
+                                        value="{{ room.tipo }}">{{
+                                        room.tipo }}</option>
+                                </select>
+                            </div>
+                            <p *ngIf="campoNoValido('tipoHabitacion')" class="text-danger">* El tipo de habitación es
+                                obligatorio
+                            </p>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <div class="form-group">
+                                    <label for="exampleInputEmail1">Ubicación<small class="text-danger">
+                                            *</small></label>
+                                    <input type="text" class="form-control" formControlName="ubicacion">
+                                    <p *ngIf="campoNoValido('ubicacion')" class="text-danger">* La ubicación es
+                                        obligatorio
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                <div class="form-group">
+                                    <label for="exampleInputEmail1">Disponibilidad<small class="text-danger">
+                                            *</small></label>
+                                    <select class="form-control" id="disponibilidad" formControlName="disponibilidad">
+                                        <option disabled selected>Seleccione Disponibilidad de Hotel...</option>
+                                        <option value="true">Habilitado</option>
+                                        <option value="false">Deshabilitado</option>
+                                    </select>
+                                </div>
+                                <p *ngIf="campoNoValido('disponibilidad')" class="text-danger">* La disponibilidad
+                                    es obligatoria</p>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-info" (click)="createRoom()" *ngIf="isBtnCreate">Crear</button>
+                <button type="button" class="btn btn-outline-info" (click)="updateRoom()" *ngIf="!isBtnCreate">Editar</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- ============================================================== -->
+<!-- FIN FORMULARIO DE REGISTRO NUEVA HABITACIÓN -->
+<!-- ============================================================== -->

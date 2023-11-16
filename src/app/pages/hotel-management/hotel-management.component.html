@@ -1,0 +1,100 @@
+<div class="row float-right m-4">
+  <button type="button" class="btn btn-outline-info" data-toggle="modal" data-target="#exampleModal"
+    (click)="isBtnCreate = true; registerHotel.reset();">
+    Crear Hotel
+  </button>
+</div>
+
+<div class="row col-sm-12 mt-4">
+  <div class="col-sm-4" *ngFor="let hotels of hotelList">
+    <div class="card" style="width: 18rem;">
+      <div class="card-body">
+        <h2 class="card-title">{{ hotels.nombreHotel }}</h2>
+        <h6 class="card-subtitle mb-2 text-muted">HABITACIONES DISPONIBLES: <strong class="text-success">{{ hotels.rooms.length }}</strong></h6>
+        <p class="card-text">{{ hotels.descripcionHotel }}</p>
+        <span class="d-flex justify-content-center text-center badge"
+          [ngClass]="hotels.disponiblidadHotel === 'Habilitado' ? 'badge-success': 'badge-danger'">{{
+          hotels.disponiblidadHotel }}</span> <br>
+        <button type="button" class="btn btn-outline-info btn-block mb-2" data-toggle="modal"
+          data-target="#exampleModal" (click)="isEditHotel(hotels)">
+          Editar
+        </button>
+        <button type="button" class="btn btn-outline-danger btn-block" (click)="deleteHotel(hotels.id)">
+          Eliminar
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================== -->
+<!-- FORMULARIO DE REGISTRO NUEVO HOTEL -->
+<!-- ============================================================== -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Crear Nuevo Hotel</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" #closeModal>
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="registerHotel">
+          <div class="row">
+            <div class="col-sm-12">
+              <div class="form-group">
+                <label for="exampleInputEmail1">Nombre<small class="text-danger"> *</small></label>
+                <input type="text" class="form-control" formControlName="nombreHotel">
+                <p *ngIf="campoNoValido('nombreHotel')" class="text-danger">* El nombre es obligatorio
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-sm-12">
+              <div class="form-group">
+                <label for="exampleInputEmail1">Ciudad<small class="text-danger"> *</small></label>
+                <input type="text" class="form-control" formControlName="ciudadHotel">
+                <p *ngIf="campoNoValido('ciudadHotel')" class="text-danger">* El nombre es obligatorio
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-sm-12">
+              <div class="form-group">
+                <label for="email">Disponibilidad Hotel<small class="text-danger">*</small></label>
+                <select class="form-control" id="disponiblidadHotel" formControlName="disponiblidadHotel">
+                  <option disabled selected>Seleccione Disponibilidad de Hotel...</option>
+                  <option value="Habilitado">Habilitado</option>
+                  <option value="Deshabilitado">Deshabilitado</option>
+                </select>
+              </div>
+              <p *ngIf="campoNoValido('disponiblidadHotel')" class="text-danger">* La disponibilidad es obligatoria</p>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-sm-12">
+              <div class="form-group">
+                <label for="exampleInputEmail1">Descripción<small class="text-danger"> *</small></label>
+                <textarea class="form-control" id="descripcionHotel" rows="3"
+                  formControlName="descripcionHotel"></textarea>
+                <p *ngIf="campoNoValido('descripcionHotel')" class="text-danger">* La Descripción es obligatorio
+                </p>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-info" (click)="createHotel()" *ngIf="isBtnCreate">Crear</button>
+        <button type="button" class="btn btn-outline-info" (click)="updateHotel()" *ngIf="!isBtnCreate">Editar</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- ============================================================== -->
+<!-- FIN FORMULARIO DE REGISTRO NUEVO HOTEL -->
+<!-- ============================================================== -->
