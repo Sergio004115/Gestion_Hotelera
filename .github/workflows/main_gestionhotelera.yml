@@ -59,4 +59,4 @@ jobs:
           app-name: 'GestionHotelera'
           slot-name: 'Production'
           package: .
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_09F34CC6396D40DABB262F0EFB0D44B1 }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_7B06D9A840FF4CCAA47A594DC17D80CC }}
