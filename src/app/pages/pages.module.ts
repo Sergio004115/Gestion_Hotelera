@@ -5,7 +5,6 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms'
 
 // Modulos
 import { SharedModule } from '../shared/shared.module';
-import { ComponentsModule } from '../components/components.module';
 
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { PagesComponent } from './pages.component';
@@ -40,7 +39,6 @@ import { ReservasComponent } from './customer/reservas/reservas.component';
     FormsModule,
     SharedModule,
     RouterModule,
-    ComponentsModule,
     ReactiveFormsModule
   ], 
   providers: [DatePipe]
